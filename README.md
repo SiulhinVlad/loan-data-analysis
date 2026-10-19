@@ -22,21 +22,6 @@ Exploratory analysis of 2015 US consumer loan data, combining data cleaning, des
 - **Note on class imbalance:** about 74% of completed loans are fully paid, so always predicting "Fully Paid" would already reach ~74% accuracy. The model is strong at recognising loans that will be repaid but detects only a small share of charged-off loans. Improving default detection would require class weighting, threshold tuning or cost-sensitive learning, and evaluation with per-class recall, balanced accuracy and ROC AUC rather than accuracy alone.
 - Some poster wording describes the prediction step as "linear regression"; the model actually used in the notebook is a Random Forest.
 
-## Repository structure
-
-```
-notebooks/
-  01_loan_status_random_forest.ipynb   cleaning, descriptive statistics, Random Forest, feature importance
-  02_employee_title_clustering.ipynb   TF-IDF + k-means clustering of job titles
-figures/                               figures exported from the notebooks and a poster preview
-poster/
-  poster.pdf                           final scientific poster
-  descriptive_graphs.pdf               Power BI graphs used for the descriptive analysis
-data/
-  purposes.csv                         number of loans per purpose
-  emp_words.tsv                        word frequencies in employee titles
-```
-
 ## Data
 
 The raw dataset (accepted loans issued in 2015, originally published by LendingClub) is **not included** because of its size. The notebooks expect it as `data_accepted_2015.xlsx` in the working directory. Intermediate Excel files produced by the notebooks are also excluded.
