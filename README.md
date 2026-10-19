@@ -1,26 +1,44 @@
 # Loans Data Analysis: US Loans in 2015
 
-Exploratory analysis of 2015 US consumer loan data, combining data cleaning, descriptive visual analysis in Power BI, loan repayment prediction with a Random Forest, and TF-IDF + k-means clustering of borrowers' job titles. The results were presented as a scientific poster.
+Analysis of 2015 US consumer loan data from LendingClub, this project includes data preparation, descriptive analysis in Power BI, Random Forest classification of repayment outcomes, and TF-IDF + k-means clustering of borrowers' job titles. The analysis was presented as a scientific poster.
 
 ![Poster preview](figures/poster_preview.jpg)
 
-## What the project does
+## Data preparation
 
-1. **Data cleaning** – drops non-informative columns, maps categorical values (grades, employment length, US states) to usable forms, reduces memory use from ~227 MB to ~89 MB through data types, and removes outliers (quantile filtering on annual income, DTI < 41).
-2. **Descriptive analysis** – distributions and relationships between loan amount, income, FICO score, grade, purpose, home ownership and state, visualised in Power BI (state maps, scatter plots, word clouds). See [`poster/descriptive_graphs.pdf`](poster/descriptive_graphs.pdf).
-3. **Repayment prediction** – a scikit-learn `RandomForestClassifier` (max depth 10) trained on standardised, one-hot-encoded features, evaluated with stratified 5-fold cross-validation and a held-out 30% test set.
-4. **Model interpretation** – feature importances from the forest identify the variables that matter most: loan grade, debt-to-income ratio, FICO score, annual income and loan term.
-5. **Job-title clustering** – free-text employee titles are cleaned, vectorised with TF-IDF and grouped with k-means, then refined manually into ~40 occupation clusters (managers, nurses, engineers, owners…), which are linked back to income and charged-off rates.
+The saved notebook outputs describe **421,095 input records**. Preparation removes unused columns, maps state abbreviations to full names, converts employment length to numeric values, and maps loan grades to an ordinal scale.
 
-## Prediction results
+- **Memory optimisation:** categorical and compact numeric types reduce recorded memory use from **226.6 MB to 80.4 MB**, then to **61.4 MB** after further mapping, about a **73% reduction** overall.
+- **Outlier filtering:** annual income is filtered using bounds derived from the 5th and 95th percentiles, and records with debt-to-income ratio (DTI) of 41 or above are excluded.
+- **Missing values:** employment titles and employment length have missing entries. Missing or unmatched job titles remain a limitation of the occupation analysis.
+
+## Descriptive analysis and findings
+
+Power BI visualisations examine loan purpose, funded amount, annual income, FICO score, grade, home ownership, state, and repayment status through state charts, scatter plots, distributions, and word clouds.
+
+- **Loan purpose:** debt consolidation accounts for approximately **59%** of the loans in the exported purpose counts, followed by credit cards at approximately **24%** and home improvement at approximately **6%**. Together, these categories dominate the recorded borrowing purposes. See [`data/purposes.csv`](data/purposes.csv).
+- **Geographical patterns:** the poster identifies California as having the largest loan count, followed by Texas and New York. Loan counts and charged-off proportions are shown separately to distinguish borrowing volume from repayment outcomes.
+- **Borrower characteristics:** income, funded amount, FICO score, and grade are compared visually.
+
+The [exported Power BI graphs](poster/descriptive_graphs.pdf) provide the supporting visualisations.
+
+## Loan repayment prediction and feature importance
+
+The prediction task distinguishes **Fully Paid** from **Charged Off** loans. Other statuses, including current loans, are excluded from model training. The notebook uses one-hot encoding, standardisation, and a scikit-learn `RandomForestClassifier` with `max_depth=10` and `random_state=1`.
 
 | Feature importance | Correlation matrix |
 |---|---|
 | ![Feature importance](figures/feature_importance.png) | ![Correlation heatmap](figures/correlation_heatmap.png) |
 
-- Cross-validated accuracy ≈ 0.75; held-out test accuracy ≈ 0.76.
-- **Note on class imbalance:** about 74% of completed loans are fully paid, so always predicting "Fully Paid" would already reach ~74% accuracy. The model is strong at recognising loans that will be repaid but detects only a small share of charged-off loans. Improving default detection would require class weighting, threshold tuning or cost-sensitive learning, and evaluation with per-class recall, balanced accuracy and ROC AUC rather than accuracy alone.
-- Some poster wording describes the prediction step as "linear regression"; the model actually used in the notebook is a Random Forest.
+- **Recorded cross-validation results:** stratified 5-fold cross-validation produces accuracies of **74.47–74.81%**, averaging approximately **74.65%**.
+- **Feature importance:** the fitted forest assigns the highest importance to grade (**36.4%**), DTI (**15.2%**), FICO score (**11.5%**), annual income (**8.1%**), and the 60-month term indicator (**7.6%**). These are model impurity-based importance scores, not causal effects or changes in repayment probability.
+
+## Job-title clustering and findings
+
+The clustering notebook processes **395,318 job-title entries**, including repeated titles. It normalises title text, consolidates common abbreviations in the vocabulary, and converts titles to TF-IDF features before applying k-means.
+
+An initial **38-cluster** solution is refined by manually merging related groups, separating business and banking titles, and reclustering the broad residual group. The resulting dictionary contains **40 categories, including “other”**. Examples include managers, nurses, engineers, teachers, technicians, and marketing/sales roles.
+
 
 ## Data
 
