@@ -2,6 +2,10 @@
 
 Analysis of 2015 US consumer loan data from LendingClub, this project includes data preparation, descriptive analysis in Power BI, Random Forest classification of repayment outcomes, and TF-IDF + k-means clustering of borrowers' job titles. The analysis was presented as a scientific poster.
 
+# Team
+
+Daniil Yampolskyi, Mykyta Yampolskyi, Vladyslav Siulhin.
+
 ![Poster preview](figures/poster_preview.jpg)
 
 ## Data preparation
